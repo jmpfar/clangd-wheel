@@ -1,4 +1,4 @@
-include clang-tidy_version.cmake
+include clangd_version.cmake
 include CMakeLists.txt
 include LICENSE.md
 include COPYING.md

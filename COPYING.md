@@ -1,9 +1,6 @@
-Copyright 2021 Dominic Kempf, Heidelberg University and contributors
+Copyright 2025 Dan Ilan
 
-Some parts of this project are heavily inspired by the packaging of
-Ninja provided by scikit-build under the Apache 2.0 license. The list
-of copyright owners for this project can be found here:
-https://github.com/scikit-build/ninja-python-distributions/blob/master/AUTHORS.rst 
+This project is a fork of the code for [clang-tidy wheel](https://github.com/ssciwr/clang-tidy-wheel), authored by Dominic Kempf, Heidelberg University and contributors.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.

@@ -12,25 +12,26 @@ else:
 
 
 @functools.lru_cache(maxsize=None)
-def _get_executable(name:str) -> Path:
+def _get_executable(name: str) -> Path:
     if sys.version_info.minor >= 9:
         # Only available in 3.9 or later, and required in 3.12
         possibles = [
-            Path(files("clang_tidy") / f"data/bin/{name}{s}")
+            Path(files("clangd") / f"data/bin/{name}{s}")
             for s in ("", ".exe", ".bin", ".dmg")
         ]
     else:
         possibles = [
-            Path(pkg_resources.resource_filename("clang_tidy", f"data/bin/{name}{s}"))
+            Path(pkg_resources.resource_filename("clangd", f"data/bin/{name}{s}"))
             for s in ("", ".exe", ".bin", ".dmg")
         ]
     for exe in possibles:
         if exe.exists():
-            if os.environ.get("CLANG_TIDY_WHEEL_VERBOSE", None):
-                print(f'Found binary: {exe} ')
+            if os.environ.get("CLANGD_WHEEL_VERBOSE", None):
+                print(f"Found binary: {exe} ")
             return exe
 
     raise FileNotFoundError(f"No executable found for {name} at\n{possibles}")
+
 
 def _run(name, *args):
     command = [_get_executable(name)]
@@ -39,6 +40,7 @@ def _run(name, *args):
     else:
         command += sys.argv[1:]
     return subprocess.call(command)
+
 
 def _run_python(name, *args):
     command = [sys.executable, _get_executable(name)]
@@ -52,7 +54,5 @@ def _run_python(name, *args):
     return subprocess.call(command)
 
 
-def clang_tidy():
-    raise SystemExit(_run("clang-tidy"))
-
-
+def clangd():
+    raise SystemExit(_run("clangd"))
