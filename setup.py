@@ -53,14 +53,15 @@ setup(
         "Documentation": "https://clangd.llvm.org/",
         "Source": "https://github.com/jmpfar/clangd-wheel",
     },
-    keywords=["clangd", "lsp", "c++", "c", "static-analysis"],
+    keywords=["clangd", "lsp", "language-server", "llvm", "clang", "static-analysis"],
     classifiers=[
+        "Environment :: No Input/Output (Daemon)",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
         "Programming Language :: C",
         "Programming Language :: C++",
-        "Topic :: Software Development :: Quality Assurance",
+        "Topic :: Software Development",
     ],
     license="Apache 2.0",
 )
