@@ -30,6 +30,12 @@ jobs:
           - os: ubuntu-24.04
             arch: "x86_64"
             skip: "*musllinux*"
+          - os: ubuntu-24.04-arm
+            arch: "aarch64"
+            skip: "*manylinux*"            
+          - os: ubuntu-24.04-arm
+            arch: "aarch64"
+            skip: "*musllinux*"
           - os: windows-2022
             arch: "AMD64"
             skip: 
