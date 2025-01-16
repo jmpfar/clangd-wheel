@@ -16,10 +16,10 @@ class genericpy_bdist_wheel(_bdist_wheel):
 
 # Read the clangd version from the "single source of truth"
 def get_version():
-    with open("clangd_version.cmake", "r") as version_file:
+    with open("clangd_version.cmake") as version_file:
         parsed = {}
         for line in version_file:
-            match = re.match("set\((.*) (.*)\)", line)
+            match = re.match(r"set\((.*) (.*)\)", line)
             if len(match.groups()) != 2:
                 raise ValueError("Version File not readable")
             parsed[match.groups()[0]] = match.groups()[1]
@@ -30,7 +30,7 @@ def get_version():
 
 
 # Parse the given README file
-with open("README.md", "r") as readme_file:
+with open("README.md") as readme_file:
     readme = readme_file.read()
 
 cmdclass = {"bdist_wheel": genericpy_bdist_wheel}
