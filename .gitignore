@@ -184,4 +184,14 @@ _deps
 # scikit-build cache
 _skbuild/
 
-clang_tidy/data/
+clangd/data/
+
+# Standard temporal folder.
+tmp/
+
+# cibuild standard output of the wheels
+wheelhouse/
+
+# IDE configuration folders
+.vscode/
+.idea/
