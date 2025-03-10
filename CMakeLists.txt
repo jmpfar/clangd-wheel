@@ -1,14 +1,12 @@
+cmake_minimum_required(VERSION 3.16...3.31)
 project(clangd-wheel)
-cmake_minimum_required(VERSION 3.16)
 
-# Include the "single source of truth" for the clangd version
-include(clangd_version.cmake)
-string(REPLACE "-" "" CLANGD_VERSION_SHORT "${CLANGD_VERSION}")
-string(REPLACE "." ";" CLANGD_VERSION_LIST ${CLANGD_VERSION})
-list(GET CLANGD_VERSION_LIST 0 CLANGD_VERSION_MAJOR)
+message(STATUS "clangd-wheel version: ${SKBUILD_PROJECT_VERSION}")
+string(REGEX MATCH "^([0-9]+)\.([0-9]+)\.([0-9]+)" CLANGD_VERSION "${SKBUILD_PROJECT_VERSION}")
+set(CLANGD_VERSION_MAJOR ${CMAKE_MATCH_1}) # https://cmake.org/cmake/help/latest/variable/CMAKE_MATCH_n.html
+message(STATUS "clangd version: ${CLANGD_VERSION}")
 
-# Define a build rule clangd
-set(LLVM_DOWNLOAD_URL "https://github.com/llvm/llvm-project/releases/download/llvmorg-${CLANGD_VERSION}/llvm-project-${CLANGD_VERSION_SHORT}.src.tar.xz")
+set(LLVM_DOWNLOAD_URL "https://github.com/llvm/llvm-project/releases/download/llvmorg-${CLANGD_VERSION}/llvm-project-${CLANGD_VERSION}.src.tar.xz")
 include(ExternalProject)
 ExternalProject_add(build-clangd
   URL "${LLVM_DOWNLOAD_URL}"
@@ -23,7 +21,12 @@ ExternalProject_add(build-clangd
   CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DLLVM_ENABLE_ZSTD=OFF -DLLVM_ENABLE_PROJECTS=clang$<SEMICOLON>clang-tools-extra
   BUILD_COMMAND ${CMAKE_COMMAND} --build . --target clangd
 )
-set(clangd-executable ${CMAKE_BINARY_DIR}/llvm/bin/clangd${CMAKE_EXECUTABLE_SUFFIX})
+
+set(config-subfolder "")
+if(CMAKE_GENERATOR MATCHES "Visual Studio")
+  set(config-subfolder "Release")
+endif()
+set(clangd-executable ${CMAKE_BINARY_DIR}/llvm/${config-subfolder}/bin/clangd${CMAKE_EXECUTABLE_SUFFIX})
 
 # Reduce the size of the executable by executing strip if it is present on the system
 find_program(STRIP_EXECUTABLE strip)

@@ -1,6 +1,5 @@
 import os
 import sys
-import tempfile
 from pathlib import Path
 
 import pytest
@@ -27,4 +26,3 @@ def test_executable_file(capsys):
     assert os.path.exists(exe)
     assert os.access(exe, os.X_OK)
     assert capsys.readouterr().out == ""
-
