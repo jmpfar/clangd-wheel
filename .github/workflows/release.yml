@@ -155,6 +155,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
+      contents: write
     if: github.repository_owner == 'jmpfar'
 
     steps:
