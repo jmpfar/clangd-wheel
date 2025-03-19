@@ -17,8 +17,9 @@ jobs:
 
       - name: Get current version
         id: current_version
+        # Only read first three version components, last one is for wheel
         run: |
-          echo "current_version=$(cat clangd_version.txt | tr -d '\n')" >> $GITHUB_OUTPUT
+          echo "current_version=$(cut -d'.' -f1-3 clangd_version.txt)" >> $GITHUB_OUTPUT
 
       - name: Check latest LLVM version
         id: latest_version
@@ -28,28 +29,32 @@ jobs:
 
       - name: Create Pull Request if new version
         if: steps.latest_version.outputs.latest_version != steps.current_version.outputs.current_version
+        id: create_commit
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           
-          git checkout -b update-llvm-${{ steps.latest_version.outputs.latest_version }}
-          echo "${{ steps.latest_version.outputs.latest_version }}" > clangd_version.txt
+          full_version="${{ steps.latest_version.outputs.latest_version }}.0"
+          echo "full_version=$full_version" >> $GITHUB_OUTPUT
+
+          git checkout -b update-llvm-$full_version
+          echo "$full_version" > clangd_version.txt
           
           git add clangd_version.txt
-          git commit -m "Update LLVM version to ${{ steps.latest_version.outputs.latest_version }}"
-          git push origin update-llvm-${{ steps.latest_version.outputs.latest_version }}
+          git commit -m "Update LLVM version to $full_version"
+          git push origin update-llvm-$full_version
 
       - name: Create Pull Request
         if: steps.latest_version.outputs.latest_version != steps.current_version.outputs.current_version
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          title: "Update LLVM version to ${{ steps.latest_version.outputs.latest_version }}"
+          title: "Update LLVM version to ${{ steps.create_commit.outputs.full_version }}"
           body: |
-            This PR updates the LLVM version from ${{ steps.current_version.outputs.current_version }} to ${{ steps.latest_version.outputs.latest_version }}.
+            This PR updates the LLVM version from ${{ steps.current_version.outputs.current_version }} to ${{ steps.create_commit.outputs.full_version }}.
             
             This is an automated PR created by the LLVM version checker workflow.
-          branch: update-llvm-${{ steps.latest_version.outputs.latest_version }}
+          branch: update-llvm-${{ steps.create_commit.outputs.full_version }}
           base: main
           labels: |
             automated
