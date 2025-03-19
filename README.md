@@ -2,7 +2,7 @@
 
 [![PyPI Release](https://img.shields.io/pypi/v/clangd.svg)](https://pypi.org/project/clangd) [![License](https://img.shields.io/pypi/l/clangd)](https://github.com/jmpfar/clangd-wheel/blob/main/LICENSE.md)
 
-This project packages the `clangd` utility as a Python wheel, supplying the `clangd` binaries for use of python projects or alternatively as an easy mean to install cross-platform statically-linked packages of the utility. 
+This project packages the `clangd` utility as a Python wheel, supplying the `clangd` binaries for use of python projects or generally as cross-platform statically-linked packages of the utility. 
 
 The wheel can be used when you need to interact with a C/C++ [LSP](https://en.wikipedia.org/wiki/Language_Server_Protocol) server. For example, in static analyzers such as [clangd-tidy](https://github.com/lljbash/clangd-tidy).
 
@@ -26,7 +26,7 @@ Run:
 clangd
 ```
 
-## Supported platforms
+## Builder platforms
 
 | OS       | Version | Architecture | Platform                            |
 |----------|---------|--------------|-------------------------------------|
