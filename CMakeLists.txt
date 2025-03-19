@@ -6,7 +6,8 @@ string(REGEX MATCH "^([0-9]+)\.([0-9]+)\.([0-9]+)" CLANGD_VERSION "${SKBUILD_PRO
 set(CLANGD_VERSION_MAJOR ${CMAKE_MATCH_1}) # https://cmake.org/cmake/help/latest/variable/CMAKE_MATCH_n.html
 message(STATUS "clangd version: ${CLANGD_VERSION}")
 
-set(LLVM_DOWNLOAD_URL "https://github.com/llvm/llvm-project/releases/download/llvmorg-${CLANGD_VERSION}/llvm-project-${CLANGD_VERSION}.src.tar.xz")
+set(LLVM_DOWNLOAD_URL "https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-${CLANGD_VERSION}.tar.gz")
+
 include(ExternalProject)
 ExternalProject_add(build-clangd
   URL "${LLVM_DOWNLOAD_URL}"
