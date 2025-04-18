@@ -51,8 +51,7 @@ jobs:
             This PR updates the LLVM version from ${{ steps.current_version.outputs.current_version }} to ${{ steps.update_version_file.outputs.full_version }}.
             
             This is an automated PR created by the LLVM version checker workflow.
-          committer: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-          author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>            
+          sign-commits: true
           branch: update/llvm-${{ steps.update_version_file.outputs.full_version }}
           base: main
           labels: |
