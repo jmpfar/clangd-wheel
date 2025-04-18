@@ -27,35 +27,32 @@ jobs:
           latest_version=$(curl -s https://api.github.com/repos/llvm/llvm-project/releases/latest | jq -r '.tag_name' | sed 's/llvmorg-//')
           echo "latest_version=$latest_version" >> $GITHUB_OUTPUT
 
-      - name: Create Pull Request if new version
+      - name: Update version file
         if: steps.latest_version.outputs.latest_version != steps.current_version.outputs.current_version
-        id: create_commit
+        id: update_version_file
         run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          
           full_version="${{ steps.latest_version.outputs.latest_version }}.0"
           echo "full_version=$full_version" >> $GITHUB_OUTPUT
 
           git checkout -b update-llvm-$full_version
           echo "$full_version" > clangd_version.txt
-          
-          git add clangd_version.txt
-          git commit -m "Update LLVM version to $full_version"
-          git push origin update-llvm-$full_version
+
+          echo "Updated clangd_version.txt to $full_version"
 
       - name: Create Pull Request
         if: steps.latest_version.outputs.latest_version != steps.current_version.outputs.current_version
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          title: "Update LLVM version to ${{ steps.create_commit.outputs.full_version }}"
+          title: "Update LLVM version to ${{ steps.update_version_file.outputs.full_version }}"
           body: |
             This PR updates the LLVM version from ${{ steps.current_version.outputs.current_version }} to ${{ steps.create_commit.outputs.full_version }}.
             
             This is an automated PR created by the LLVM version checker workflow.
-          branch: update-llvm-${{ steps.create_commit.outputs.full_version }}
+          committer: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+          author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>            
+          branch: update-llvm-${{ steps.update_version_file.outputs.full_version }}
+          delete-branch: true
           base: main
           labels: |
             automated
-            dependencies 
