@@ -14,6 +14,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all branches and tags, needed for PR
 
       - name: Get current version
         id: current_version
@@ -46,7 +48,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           title: "Update LLVM version to ${{ steps.update_version_file.outputs.full_version }}"
           body: |
-            This PR updates the LLVM version from ${{ steps.current_version.outputs.current_version }} to ${{ steps.create_commit.outputs.full_version }}.
+            This PR updates the LLVM version from ${{ steps.current_version.outputs.current_version }} to ${{ steps.update_version_file.outputs.full_version }}.
             
             This is an automated PR created by the LLVM version checker workflow.
           committer: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
