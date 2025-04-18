@@ -42,7 +42,7 @@ jobs:
 
       - name: Create Pull Request
         if: steps.latest_version.outputs.latest_version != steps.current_version.outputs.current_version
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           title: "Update LLVM version to ${{ steps.update_version_file.outputs.full_version }}"
