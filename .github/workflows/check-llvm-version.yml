@@ -58,3 +58,6 @@ jobs:
           base: main
           labels: |
             automated
+            llvm-version-update
+          reviewers: 
+            jmpfar

@@ -1,0 +1,54 @@
+# .github/workflows/tag-merged-version.yml
+name: Tag Merged Version Update
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+
+jobs:
+  tag-release:
+    if: github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'llvm-version-update')
+    runs-on: ubuntu-latest
+    permissions:
+      # Needed to write tags
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get version from merged file
+        id: get_version
+        run: |
+          merged_version=$(cat clangd_version.txt)
+          echo "Version found in merged file: $merged_version"
+          if [[ ! "$merged_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Error: Invalid version format found in clangd_version.txt: $merged_version"
+            exit 1
+          fi
+          echo "version_tag=v${merged_version}" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Create and Push Tag
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          TAG_NAME="${{ steps.get_version.outputs.version_tag }}"
+
+          echo "Checking if tag $TAG_NAME already exists..."
+          if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
+            echo "Tag $TAG_NAME already exists. Skipping tag creation."
+            exit 0
+          fi
+
+          echo "Creating annotated tag: $TAG_NAME for merge commit HEAD"
+          git tag -a "$TAG_NAME" -m "Release version $TAG_NAME" HEAD
+          echo "Pushing tag $TAG_NAME to remote repository"
+          git push origin "$TAG_NAME"
+          echo "Successfully tagged and pushed $TAG_NAME"
+        shell: bash
