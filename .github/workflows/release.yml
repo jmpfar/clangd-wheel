@@ -50,7 +50,7 @@ jobs:
             platform: "musllinux"
             arch: "aarch64"
           # Windows
-          - os: windows-latest
+          - os: windows-2025
             platform: "win"
             arch: "AMD64"
           - os: windows-11-arm
@@ -60,7 +60,7 @@ jobs:
           - os: macos-13
             platform: "macos"
             arch: "x86_64"
-          - os: macos-latest
+          - os: macos-15
             platform: "macos"
             arch: "arm64"
 
