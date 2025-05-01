@@ -31,9 +31,9 @@ ExternalProject_Add(
              -DLLVM_INCLUDE_EXAMPLES=OFF
              -DLLVM_INCLUDE_BENCHMARKS=OFF
              -DLLVM_BUILD_TOOLS=OFF
+             -DLLVM_ENABLE_PROJECTS=clang$<SEMICOLON>clang-tools-extra
              -DCLANG_INCLUDE_TESTS=OFF
              -DCLANG_INCLUDE_DOCS=OFF
-             -DLLVM_ENABLE_PROJECTS=clang-tools-extra
   BUILD_COMMAND ${CMAKE_COMMAND} --build . --target clangd)
 
 set(config-subfolder "")
