@@ -28,7 +28,6 @@ input = "clangd_version.txt"
 Documentation = "https://clangd.llvm.org/"
 Source = "https://github.com/jmpfar/clangd-wheel"
 
-
 [project.scripts]
 "clangd" = "clangd:clangd"
 
