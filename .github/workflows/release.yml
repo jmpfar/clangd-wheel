@@ -53,6 +53,9 @@ jobs:
           - os: windows-latest
             platform: "win"
             arch: "AMD64"
+          - os: windows-11-arm
+            platform: "win"
+            arch: "ARM64"
           # macOS
           - os: macos-13
             platform: "macos"
