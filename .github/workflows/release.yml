@@ -1,4 +1,6 @@
 name: Build + Release Wheels
+permissions:
+  contents: read
 
 on:
   push:
@@ -48,14 +50,17 @@ jobs:
             platform: "musllinux"
             arch: "aarch64"
           # Windows
-          - os: windows-latest
+          - os: windows-2025
             platform: "win"
             arch: "AMD64"
+          - os: windows-11-arm
+            platform: "win"
+            arch: "ARM64"
           # macOS
           - os: macos-13
             platform: "macos"
             arch: "x86_64"
-          - os: macos-latest
+          - os: macos-15
             platform: "macos"
             arch: "arm64"
 
