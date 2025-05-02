@@ -32,9 +32,9 @@ clangd
 |----------|---------|--------------|-------------------------------------|
 | Ubuntu   | 24.04   | x86_64       | manylinux                           |
 | Ubuntu   | 24.04   | x86_64       | [musllinux](https://musl.libc.org/) |
-| Ubuntu   | 24.04   | ARM64        | manylinux                           |
-| Ubuntu   | 24.04   | ARM64        | [musllinux](https://musl.libc.org/) |         
-| macOS    | 15      | ARM64        |                                     |
+| Ubuntu   | 24.04   | arm64        | manylinux                           |
+| Ubuntu   | 24.04   | arm64        | [musllinux](https://musl.libc.org/) |         
+| macOS    | 15      | arm64        |                                     |
 | macOS    | 13      | x86_64       |                                     |
 | Windows  | 2025    | x86_64       |                                     |
-| Windows  | 11      | ARM64        |                                     |
+| Windows  | 11      | arm64        |                                     |
