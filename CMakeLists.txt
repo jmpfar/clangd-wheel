@@ -44,10 +44,19 @@ set(clangd-executable
     ${CMAKE_BINARY_DIR}/llvm/${config-subfolder}/bin/clangd${CMAKE_EXECUTABLE_SUFFIX}
 )
 
+set(IS_ARM64_WINDOWS FALSE)
+
+if((CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows") AND
+   (CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "ARM64"))
+  set(IS_ARM64_WINDOWS TRUE)
+  message(STATUS "Building for ARM64 Windows")
+endif()
+
 # Reduce the size of the executable by executing strip if it is present on the
 # system
 find_program(STRIP_EXECUTABLE strip)
-if(STRIP_EXECUTABLE)
+if(STRIP_EXECUTABLE AND NOT IS_ARM64_WINDOWS)
+  message(STATUS "Stripping clangd executable")
   add_custom_target(
     strip-clangd ALL
     COMMAND ${STRIP_EXECUTABLE} ${clangd-executable}
