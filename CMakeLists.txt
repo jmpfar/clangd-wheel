@@ -53,6 +53,14 @@ if((CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows") AND
   message(STATUS "Building for ARM64 Windows")
 endif()
 
+message(STATUS "System information:")
+message(STATUS "CMake version: ${CMAKE_VERSION}")
+message(STATUS "Host system name: ${CMAKE_HOST_SYSTEM_NAME}")
+message(STATUS "Host Processor name: ${CMAKE_HOST_SYSTEM_PROCESSOR}")
+message(STATUS "Host Processor name (upper): ${HOST_PROCESSOR_UPPER}")
+message(STATUS "VSCMD_ARG_HOST_ARCH: $ENV{VSCMD_ARG_HOST_ARCH}")
+message(STATUS "is arm64 windows: ${IS_ARM64_WINDOWS}")
+
 # Reduce the size of the executable by executing strip if it is present on the
 # system
 find_program(STRIP_EXECUTABLE strip)
