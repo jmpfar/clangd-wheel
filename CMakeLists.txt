@@ -45,10 +45,10 @@ set(clangd-executable
 )
 
 set(IS_ARM64_WINDOWS FALSE)
-string(TOUPPER "${CMAKE_HOST_SYSTEM_PROCESSOR}" HOST_PROCESSOR_UPPER)
+string(TOUPPER "$ENV{VSCMD_ARG_HOST_ARCH}" WIN_HOST_ARCH_UPPER)
 
 if((CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows") AND
-   (HOST_PROCESSOR_UPPER STREQUAL "ARM64"))
+   (WIN_HOST_ARCH_UPPER STREQUAL "ARM64"))
   set(IS_ARM64_WINDOWS TRUE)
   message(STATUS "Building for ARM64 Windows")
 endif()
@@ -57,7 +57,6 @@ message(STATUS "System information:")
 message(STATUS "CMake version: ${CMAKE_VERSION}")
 message(STATUS "Host system name: ${CMAKE_HOST_SYSTEM_NAME}")
 message(STATUS "Host Processor name: ${CMAKE_HOST_SYSTEM_PROCESSOR}")
-message(STATUS "Host Processor name (upper): ${HOST_PROCESSOR_UPPER}")
 message(STATUS "VSCMD_ARG_HOST_ARCH: $ENV{VSCMD_ARG_HOST_ARCH}")
 message(STATUS "is arm64 windows: ${IS_ARM64_WINDOWS}")
 
@@ -65,7 +64,7 @@ message(STATUS "is arm64 windows: ${IS_ARM64_WINDOWS}")
 # system
 find_program(STRIP_EXECUTABLE strip)
 if(STRIP_EXECUTABLE AND NOT IS_ARM64_WINDOWS)
-  message(STATUS "Stripping clangd executable")
+  message(STATUS "Add stripping operation for clangd executable")
   add_custom_target(
     strip-clangd ALL
     COMMAND ${STRIP_EXECUTABLE} ${clangd-executable}
