@@ -17,10 +17,6 @@ on:
         description: "Version of the wheel packaging (appended to LLVM version)"
         required: false
         default: "0"
-      deploy_to_testpypi:
-        description: "Whether the build should be deployed to test.pypi.org instead of regular PyPI"
-        required: true
-        default: "false"
 
 jobs:
   build-wheels:
@@ -170,13 +166,13 @@ jobs:
           merge-multiple: true
           path: dist
 
-      - name: Upload to PyPI
+      - name: Upload to PyPI (tagged commits)
         uses: pypa/gh-action-pypi-publish@v1.12.4
-        if: (startsWith(github.ref, 'refs/tags/')) && (github.event.inputs.deploy_to_testpypi == 'false')
+        if: startsWith(github.ref, 'refs/tags/')
 
-      - name: Upload to TestPyPI
+      - name: Upload to TestPyPI (manual trigger)
         uses: pypa/gh-action-pypi-publish@v1.12.4
-        if: github.event.inputs.deploy_to_testpypi == 'true'
+        if: github.event_name == 'workflow_dispatch'
         with:
           repository_url: https://test.pypi.org/legacy/
 
