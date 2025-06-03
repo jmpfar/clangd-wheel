@@ -15,7 +15,8 @@ jobs:
     permissions:
       # Needed to write tags
       contents: write
-
+      # Invoke action
+      actions: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -52,3 +53,9 @@ jobs:
           git push origin "$TAG_NAME"
           echo "Successfully tagged and pushed $TAG_NAME"
         shell: bash
+
+      - name: Trigger Build and Release Wheels Workflow
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: release.yml
+          ref: refs/tags/${{ steps.get_version.outputs.version_tag }}
