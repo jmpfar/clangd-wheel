@@ -69,7 +69,7 @@ jobs:
         run: echo SDKROOT=$(xcrun --sdk macosx --show-sdk-path) >> $GITHUB_ENV
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v3.0.0
+        uses: pypa/cibuildwheel@v3.1.2
         env:
           CIBW_ARCHS: "${{ matrix.arch }}"
           CIBW_BEFORE_TEST: rm -rf {package}/clangd
