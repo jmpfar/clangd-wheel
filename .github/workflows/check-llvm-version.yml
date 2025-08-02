@@ -2,8 +2,8 @@ name: Check LLVM Version
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Run daily at midnight UTC
-  workflow_dispatch:  # Allow manual triggering
+    - cron: "0 0 * * *" # Run daily at midnight UTC
+  workflow_dispatch: # Allow manual triggering
 
 jobs:
   check-version:
@@ -16,18 +16,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetch all history for all branches and tags, needed for PR
+          fetch-depth: 0 # Fetch all history for all branches and tags, needed for PR
 
       - name: Get current version
         id: current_version
         # Only read first three version components, last one is for wheel
         run: |
-          echo "current_version=$(cut -d'.' -f1-3 clangd_version.txt)" >> $GITHUB_OUTPUT
+          current_version="$(cut -d'.' -f1-3 clangd_version.txt)"
+          echo "current_version=$current_version"
+          echo "current_version=$current_version" >> $GITHUB_OUTPUT
 
       - name: Check latest LLVM version
         id: latest_version
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          latest_version=$(curl -s https://api.github.com/repos/llvm/llvm-project/releases/latest | jq -r '.tag_name' | sed 's/llvmorg-//')
+          latest_version=$(gh release view -R llvm/llvm-project --json tagName --jq .tagName | sed 's/llvmorg-//')
+
+          if [[ -z "$latest_version" || "$latest_version" == "null" ]]; then
+            echo "::error Failed to fetch the latest LLVM version."
+            exit 1
+          fi
+
+          echo "latest_version=$latest_version"
           echo "latest_version=$latest_version" >> $GITHUB_OUTPUT
 
       - name: Update version file
@@ -37,7 +48,7 @@ jobs:
           full_version="${{ steps.latest_version.outputs.latest_version }}.0"
           echo "full_version=$full_version" >> $GITHUB_OUTPUT
           echo "$full_version" > clangd_version.txt
-          
+
           echo "Updated clangd_version.txt to $full_version"
 
       - name: Create Pull Request
@@ -49,7 +60,7 @@ jobs:
           commit-message: "Update LLVM version to ${{ steps.update_version_file.outputs.full_version }}"
           body: |
             This PR updates the LLVM version from ${{ steps.current_version.outputs.current_version }} to ${{ steps.update_version_file.outputs.full_version }}.
-            
+
             This is an automated PR created by the LLVM version checker workflow.
           sign-commits: true
           branch: update/llvm-${{ steps.update_version_file.outputs.full_version }}
@@ -57,5 +68,4 @@ jobs:
           labels: |
             automated
             llvm-version-update
-          reviewers: 
-            jmpfar
+          reviewers: jmpfar
