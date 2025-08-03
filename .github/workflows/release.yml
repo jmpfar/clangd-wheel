@@ -7,6 +7,8 @@ on:
     tags:
       - "v?[0-9]+.[0-9]+.[0-9]+"
       - "v?[0-9]+.[0-9]+.[0-9]+.[0-9]+"
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -21,35 +23,59 @@ jobs:
           - os: ubuntu-latest
             platform: "manylinux"
             arch: "x86_64"
+            cc: "clang"
+            cxx: "clang++"
           - os: ubuntu-latest
             platform: "musllinux"
             arch: "x86_64"
+            cc: "clang"
+            cxx: "clang++"
           - os: ubuntu-latest
             platform: "manylinux"
             arch: "i686"
+            cc: "clang"
+            cxx: "clang++"
           - os: ubuntu-latest
             platform: "musllinux"
             arch: "i686"
+            cc: "clang"
+            cxx: "clang++"
           - os: ubuntu-24.04-arm
             platform: "manylinux"
             arch: "aarch64"
+            cc: "clang"
+            cxx: "clang++"
           - os: ubuntu-24.04-arm
             platform: "musllinux"
             arch: "aarch64"
+            cc: "clang"
+            cxx: "clang++"
           # Windows
           - os: windows-2025
             platform: "win"
             arch: "AMD64"
+            cc: "cl"
+            cxx: "cl"
+            cflags: "/EHsc"
+            cxxflags: "/EHsc"
           - os: windows-11-arm
             platform: "win"
             arch: "ARM64"
+            cc: "cl"
+            cxx: "cl"
+            cflags: "/EHsc"
+            cxxflags: "/EHsc"
           # macOS
           - os: macos-13
             platform: "macos"
             arch: "x86_64"
+            cc: "clang"
+            cxx: "clang++"
           - os: macos-15
             platform: "macos"
             arch: "arm64"
+            cc: "clang"
+            cxx: "clang++"
 
     steps:
       - uses: actions/checkout@v4
@@ -68,16 +94,29 @@ jobs:
         if: runner.os == 'macOS'
         run: echo SDKROOT=$(xcrun --sdk macosx --show-sdk-path) >> $GITHUB_ENV
 
+      - name: Setup ccache
+        if: github.event_name == 'pull_request'
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: ${{ matrix.os }}-${{ matrix.platform }}-${{ matrix.arch }}
+          max-size: 2G
+
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.1.2
         env:
           CIBW_ARCHS: "${{ matrix.arch }}"
           CIBW_BEFORE_TEST: rm -rf {package}/clangd
           CIBW_TEST_SKIP: "*linux*"
-          # always skip PyPY builds + what's defined in the matrix
-          CIBW_SKIP: "pp* ${{matrix.skip}}"
-          # restrict to a single Python version as wheel does not depend on Python:
+          CIBW_SKIP: "pp*"
           CIBW_BUILD: "cp311-${{ matrix.platform }}*"
+          # Enable ccache for PR builds only
+          CCACHE_DIR: ${{ github.event_name == 'pull_request' && github.workspace }}/.ccache || '' }}
+          CCACHE_COMPRESS: "true"
+          # Use matrix-defined compiler settings
+          CC: ${{ github.event_name == 'pull_request' && format('ccache {0}', matrix.cc) || matrix.cc }}
+          CXX: ${{ github.event_name == 'pull_request' && format('ccache {0}', matrix.cxx) || matrix.cxx }}
+          CFLAGS: ${{ matrix.cflags || '' }}
+          CXXFLAGS: ${{ matrix.cxxflags || '' }}
 
       - uses: actions/upload-artifact@v4
         with:
