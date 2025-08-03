@@ -8,7 +8,7 @@ on:
       - "v?[0-9]+.[0-9]+.[0-9]+"
       - "v?[0-9]+.[0-9]+.[0-9]+.[0-9]+"
   pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -85,7 +85,6 @@ jobs:
           CIBW_TEST_SKIP: "*linux*"
           CIBW_SKIP: "pp*"
           CIBW_BUILD: "cp311-${{ matrix.platform }}*"
-          # Use LLVM's native ccache support for PR builds
           LLVM_CCACHE_BUILD: ${{ github.event_name == 'pull_request' && 'ON' || 'OFF' }}
           LLVM_CCACHE_DIR: ${{ github.workspace }}/.ccache
           LLVM_CCACHE_MAXSIZE: "2G"
