@@ -86,8 +86,12 @@ jobs:
           CIBW_SKIP: "pp*"
           CIBW_BUILD: "cp311-${{ matrix.platform }}*"
           LLVM_CCACHE_BUILD: ${{ github.event_name == 'pull_request' && 'ON' || 'OFF' }}
-          LLVM_CCACHE_DIR: ${{ github.workspace }}/.ccache
-          LLVM_CCACHE_MAXSIZE: "2G"
+          CCACHE_DIR: ${{ github.workspace }}/.ccache
+          CCACHE_MAXSIZE: "2G"
+          CCACHE_COMPRESS: "true"
+
+      - name: CCache stats
+        run: ccache -s
 
       - uses: actions/upload-artifact@v4
         with:

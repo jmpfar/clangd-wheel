@@ -26,23 +26,10 @@ set(LLVM_CMAKE_ARGS
     -DLLVM_INCLUDE_TESTS=OFF
 )
 
-# Setup ccache configuration from environment if available
 if(DEFINED ENV{LLVM_CCACHE_BUILD})
     set(LLVM_CCACHE_BUILD $ENV{LLVM_CCACHE_BUILD})
     list(APPEND LLVM_CMAKE_ARGS -DLLVM_CCACHE_BUILD=${LLVM_CCACHE_BUILD})
     message(STATUS "Using ccache: ${LLVM_CCACHE_BUILD}")
-
-    if(DEFINED ENV{LLVM_CCACHE_DIR})
-        set(LLVM_CCACHE_DIR $ENV{LLVM_CCACHE_DIR})
-        list(APPEND LLVM_CMAKE_ARGS -DLLVM_CCACHE_DIR=${LLVM_CCACHE_DIR})
-        message(STATUS "CCache directory: ${LLVM_CCACHE_DIR}")
-    endif()
-    
-    if(DEFINED ENV{LLVM_CCACHE_MAXSIZE})
-        set(LLVM_CCACHE_MAXSIZE $ENV{LLVM_CCACHE_MAXSIZE})
-        list(APPEND LLVM_CMAKE_ARGS -DLLVM_CCACHE_MAXSIZE=${LLVM_CCACHE_MAXSIZE})
-        message(STATUS "CCache max size: ${LLVM_CCACHE_MAXSIZE}")
-    endif()
 endif()
 
 include(ExternalProject)
