@@ -23,59 +23,35 @@ jobs:
           - os: ubuntu-latest
             platform: "manylinux"
             arch: "x86_64"
-            cc: "clang"
-            cxx: "clang++"
           - os: ubuntu-latest
             platform: "musllinux"
             arch: "x86_64"
-            cc: "clang"
-            cxx: "clang++"
           - os: ubuntu-latest
             platform: "manylinux"
             arch: "i686"
-            cc: "clang"
-            cxx: "clang++"
           - os: ubuntu-latest
             platform: "musllinux"
             arch: "i686"
-            cc: "clang"
-            cxx: "clang++"
           - os: ubuntu-24.04-arm
             platform: "manylinux"
             arch: "aarch64"
-            cc: "clang"
-            cxx: "clang++"
           - os: ubuntu-24.04-arm
             platform: "musllinux"
             arch: "aarch64"
-            cc: "clang"
-            cxx: "clang++"
           # Windows
           - os: windows-2025
             platform: "win"
             arch: "AMD64"
-            cc: "cl"
-            cxx: "cl"
-            cflags: "/EHsc"
-            cxxflags: "/EHsc"
           - os: windows-11-arm
             platform: "win"
             arch: "ARM64"
-            cc: "cl"
-            cxx: "cl"
-            cflags: "/EHsc"
-            cxxflags: "/EHsc"
           # macOS
           - os: macos-13
             platform: "macos"
             arch: "x86_64"
-            cc: "clang"
-            cxx: "clang++"
           - os: macos-15
             platform: "macos"
             arch: "arm64"
-            cc: "clang"
-            cxx: "clang++"
 
     steps:
       - uses: actions/checkout@v4
@@ -109,14 +85,10 @@ jobs:
           CIBW_TEST_SKIP: "*linux*"
           CIBW_SKIP: "pp*"
           CIBW_BUILD: "cp311-${{ matrix.platform }}*"
-          # Enable ccache for PR builds only
-          CCACHE_DIR: ${{ github.event_name == 'pull_request' && github.workspace }}/.ccache || '' }}
-          CCACHE_COMPRESS: "true"
-          # Use matrix-defined compiler settings
-          CC: ${{ github.event_name == 'pull_request' && format('ccache {0}', matrix.cc) || matrix.cc }}
-          CXX: ${{ github.event_name == 'pull_request' && format('ccache {0}', matrix.cxx) || matrix.cxx }}
-          CFLAGS: ${{ matrix.cflags || '' }}
-          CXXFLAGS: ${{ matrix.cxxflags || '' }}
+          # Use LLVM's native ccache support for PR builds
+          LLVM_CCACHE_BUILD: ${{ github.event_name == 'pull_request' && 'ON' || 'OFF' }}
+          LLVM_CCACHE_DIR: ${{ github.workspace }}/.ccache
+          LLVM_CCACHE_MAXSIZE: "2G"
 
       - uses: actions/upload-artifact@v4
         with:
