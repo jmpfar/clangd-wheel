@@ -1,0 +1,32 @@
+name: PR Build
+permissions:
+  contents: read
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+    with:
+      matrix_config: |
+        {
+          "include": [
+            {
+              "os": "ubuntu-latest",
+              "platform": "manylinux",
+              "arch": "x86_64"
+            },
+            {
+              "os": "windows-2025",
+              "platform": "win",
+              "arch": "AMD64"
+            },
+            {
+              "os": "macos-15",
+              "platform": "macos",
+              "arch": "arm64"
+            }
+          ]
+        }
