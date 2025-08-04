@@ -37,6 +37,7 @@ jobs:
 
       - name: Get version from file
         id: get_version
+        shell: bash
         run: |
           LLVM_VERSION=$(cat clangd_version.txt)
           echo "Building llvm version $LLVM_VERSION"
