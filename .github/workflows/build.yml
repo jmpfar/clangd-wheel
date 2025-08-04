@@ -38,7 +38,7 @@ jobs:
       - name: Get version from file
         id: get_version
         run: |
-          LLVM_VERSION=$(cat version.txt)
+          LLVM_VERSION=$(cat clangd_version.txt)
           echo "Building llvm version $LLVM_VERSION"
           echo "LLVM_VERSION=$LLVM_VERSION" >> "$GITHUB_OUTPUT"
 
