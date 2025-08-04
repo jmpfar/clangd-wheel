@@ -76,6 +76,7 @@ jobs:
         with:
           key: ${{ matrix.os }}-${{ matrix.platform }}-${{ matrix.arch }}
           max-size: 2G
+          append-timestamp: false
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.1.2
@@ -89,9 +90,6 @@ jobs:
           CCACHE_DIR: ${{ github.workspace }}/.ccache
           CCACHE_MAXSIZE: "2G"
           CCACHE_COMPRESS: "true"
-
-      - name: CCache stats
-        run: ccache -s
 
       - uses: actions/upload-artifact@v4
         with:
@@ -134,7 +132,7 @@ jobs:
       - name: Install from SDist
         run: |
           rm -r clangd
-          pip install sdist/*.tar.gz
+          pip install -v sdist/*.tar.gz
 
       - name: Install test requirements
         run: python -m pip install -r requirements-dev.txt
@@ -164,7 +162,7 @@ jobs:
 
       - name: Upload to TestPyPI (manual trigger)
         uses: pypa/gh-action-pypi-publish@v1.12.4
-        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }} && github.event_name != 'pull_request'
         with:
           repository-url: https://test.pypi.org/legacy/
 
