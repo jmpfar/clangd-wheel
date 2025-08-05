@@ -12,6 +12,26 @@ set(LLVM_DOWNLOAD_URL
     "https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-${CLANGD_VERSION}.tar.gz"
 )
 
+# Setup base cmake arguments
+set(LLVM_CMAKE_ARGS
+    -DBUILD_SHARED_LIBS=OFF
+    -DCLANG_INCLUDE_DOCS=OFF
+    -DCLANG_INCLUDE_TESTS=OFF
+    -DCMAKE_BUILD_TYPE=Release
+    -DLLVM_BUILD_TOOLS=OFF
+    -DLLVM_ENABLE_PROJECTS=clang$<SEMICOLON>clang-tools-extra
+    -DLLVM_ENABLE_ZSTD=OFF
+    -DLLVM_INCLUDE_BENCHMARKS=OFF
+    -DLLVM_INCLUDE_EXAMPLES=OFF
+    -DLLVM_INCLUDE_TESTS=OFF
+)
+
+if(DEFINED ENV{LLVM_CCACHE_BUILD})
+    set(LLVM_CCACHE_BUILD $ENV{LLVM_CCACHE_BUILD})
+    list(APPEND LLVM_CMAKE_ARGS -DLLVM_CCACHE_BUILD=${LLVM_CCACHE_BUILD})
+    message(STATUS "Using ccache: ${LLVM_CCACHE_BUILD}")
+endif()
+
 include(ExternalProject)
 ExternalProject_Add(
   build-clangd
@@ -24,16 +44,7 @@ ExternalProject_Add(
   USES_TERMINAL_DOWNLOAD 1
   USES_TERMINAL_CONFIGURE 1
   USES_TERMINAL_BUILD 1
-  CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
-             -DBUILD_SHARED_LIBS=OFF
-             -DLLVM_ENABLE_ZSTD=OFF
-             -DLLVM_INCLUDE_TESTS=OFF
-             -DLLVM_INCLUDE_EXAMPLES=OFF
-             -DLLVM_INCLUDE_BENCHMARKS=OFF
-             -DLLVM_BUILD_TOOLS=OFF
-             -DLLVM_ENABLE_PROJECTS=clang$<SEMICOLON>clang-tools-extra
-             -DCLANG_INCLUDE_TESTS=OFF
-             -DCLANG_INCLUDE_DOCS=OFF
+    CMAKE_ARGS ${LLVM_CMAKE_ARGS}
   BUILD_COMMAND ${CMAKE_COMMAND} --build . --target clangd)
 
 set(config-subfolder "")
