@@ -43,13 +43,14 @@ jobs:
           echo "Building llvm version $LLVM_VERSION"
           echo "LLVM_VERSION=$LLVM_VERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Setup ccache
+      - name: Setup sccache
         if: github.event_name == 'pull_request'
         uses: hendrikmuhs/ccache-action@v1.2
         with:
           key: ${{ matrix.os }}-${{ matrix.platform }}-${{ matrix.arch }}-${{ steps.get_version.outputs.LLVM_VERSION }}
           max-size: 1G
           append-timestamp: false
+          variant: sccache
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.1.2
@@ -59,8 +60,9 @@ jobs:
           CIBW_TEST_SKIP: "*linux*"
           CIBW_SKIP: "pp*"
           CIBW_BUILD: "cp311-${{ matrix.platform }}*"
-          LLVM_CCACHE_BUILD: ${{ github.event_name == 'pull_request' && 'ON' || 'OFF' }}
           CCACHE_LOGFILE: "${{ github.workspace }}/ccache.log"
+          SCCACHE_ENABLE: ${{ github.event_name == 'pull_request' && 'ON' || 'OFF' }}
+          SCCACHE_GHA_ENABLED: "true"
 
       - uses: actions/upload-artifact@v4
         with:
