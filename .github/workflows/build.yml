@@ -64,6 +64,7 @@ jobs:
           CIBW_ENVIRONMENT_LINUX: PATH="$PATH:$HOME/.cargo/bin"
             SCCACHE_ENABLE=${{ github.event_name == 'pull_request' && 'ON' || 'OFF' }}
             SCCACHE_GHA_ENABLED=${{ github.event_name == 'pull_request' && 'true' || 'false' }}
+          CIBW_ENVIRONMENT_PASS_LINUX: ACTIONS_CACHE_URL ACTIONS_RUNTIME_TOKEN             
           CCACHE_LOGFILE: "${{ github.workspace }}/ccache.log"
           SCCACHE_ENABLE: ${{ github.event_name == 'pull_request' && 'ON' || 'OFF' }}
           SCCACHE_GHA_ENABLED: "true"
