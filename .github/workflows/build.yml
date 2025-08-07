@@ -60,8 +60,8 @@ jobs:
           CIBW_TEST_SKIP: "*linux*"
           CIBW_SKIP: "pp*"
           CIBW_BUILD: "cp311-${{ matrix.platform }}*"
-          CIBW_BEFORE_ALL_LINUX: "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"
-          CIBW_ENVIRONMENT_LINUX: 
+          CIBW_BEFORE_ALL_LINUX: "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -- -y"
+          CIBW_ENVIRONMENT_LINUX:
             SCCACHE_ENABLE=${{ github.event_name == 'pull_request' && 'ON' || 'OFF' }}
             SCCACHE_GHA_ENABLED=true
           CCACHE_LOGFILE: "${{ github.workspace }}/ccache.log"
