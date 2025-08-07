@@ -60,9 +60,9 @@ jobs:
           CIBW_TEST_SKIP: "*linux*"
           CIBW_SKIP: "pp*"
           CIBW_BUILD: "cp311-${{ matrix.platform }}*"
-          CIBW_BEFORE_ALL_LINUX: "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -- -y"
-          CIBW_ENVIRONMENT_LINUX: 
-            PATH="$HOME/.cargo/bin:$PATH"
+          CIBW_BEFORE_ALL_LINUX: "curl https://sh.rustup.rs -sSf | env -u CARGO_HOME sh -s -- --default-toolchain stable --profile minimal -y"
+          CIBW_ENVIRONMENT_LINUX: PATH="$PATH:$HOME/.cargo/bin"
+            CARGO_HOME=/host/home/runner/.cargo
             SCCACHE_ENABLE=${{ github.event_name == 'pull_request' && 'ON' || 'OFF' }}
             SCCACHE_GHA_ENABLED=true
           CCACHE_LOGFILE: "${{ github.workspace }}/ccache.log"
