@@ -62,7 +62,6 @@ jobs:
           CIBW_BUILD: "cp311-${{ matrix.platform }}*"
           CIBW_BEFORE_ALL_LINUX: 'curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain stable --profile minimal -y && . "$HOME/.cargo/env" && cargo install sccache'
           CIBW_ENVIRONMENT_LINUX: PATH="$PATH:$HOME/.cargo/bin"
-            CARGO_HOME=/host/home/runner/.cargo
             SCCACHE_ENABLE=${{ github.event_name == 'pull_request' && 'ON' || 'OFF' }}
             SCCACHE_GHA_ENABLED=true
           CCACHE_LOGFILE: "${{ github.workspace }}/ccache.log"
