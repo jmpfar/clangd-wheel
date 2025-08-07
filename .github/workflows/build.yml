@@ -71,7 +71,7 @@ jobs:
           CIBW_BEFORE_ALL_LINUX: 'yum install -y ccache'
           CIBW_ENVIRONMENT_LINUX: >-
             CCACHE_DIR=/host${{ steps.ccache-dir.outputs.dir }}
-          CIBW_ENVIRONMENT_PASS_LINUX: SCCACHE_ENABLE 
+          CIBW_ENVIRONMENT_PASS_LINUX: CCACHE_ENABLE 
           CCACHE_LOGFILE: "${{ github.workspace }}/ccache.log"
           CCACHE_ENABLE: ${{ github.event_name == 'pull_request' && 'ON' || 'OFF' }}
 
