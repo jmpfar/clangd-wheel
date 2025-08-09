@@ -74,6 +74,13 @@ jobs:
           CIBW_ENVIRONMENT_PASS_LINUX: CCACHE_ENABLE 
           CCACHE_LOGFILE: "${{ github.workspace }}/ccache.log"
           CCACHE_ENABLE: ${{ github.event_name == 'pull_request' && 'ON' || 'OFF' }}
+          # Configuration pulled from LLVM_CCACHE_BUILD parameter
+          # for some reason, they aren't configuring these for windows
+          # so I am adding these
+          CIBW_ENVIRONMENT_WINDOWS: >-
+            CCACHE_CPP2=yes
+            CCACHE_HASHDIR=yes
+            CCACHE_SLOPPINESS=pch_defines,time_macros
 
       - uses: actions/upload-artifact@v4
         with:
