@@ -50,6 +50,15 @@ jobs:
           key: ${{ matrix.os }}-${{ matrix.platform }}-${{ matrix.arch }}-${{ steps.get_version.outputs.LLVM_VERSION }}
           max-size: 1G
           append-timestamp: false
+          variant: ccache
+
+      - name: Get ccache directory
+        if: runner.os == 'Linux'
+        id: ccache-dir
+        shell: bash
+        run: |
+          CCACHE_DIR=$(ccache -k cache_dir | tr -d '\n')
+          echo "dir=${CCACHE_DIR}" >> "$GITHUB_OUTPUT"
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.1.3
@@ -59,12 +68,26 @@ jobs:
           CIBW_TEST_SKIP: "*linux*"
           CIBW_SKIP: "pp*"
           CIBW_BUILD: "cp311-${{ matrix.platform }}*"
-          LLVM_CCACHE_BUILD: ${{ github.event_name == 'pull_request' && 'ON' || 'OFF' }}
+          CIBW_BEFORE_ALL_LINUX: 'yum install -y ccache'
+          CIBW_ENVIRONMENT_LINUX: >-
+            CCACHE_DIR=/host${{ steps.ccache-dir.outputs.dir }}
+          CIBW_ENVIRONMENT_PASS_LINUX: CCACHE_ENABLE 
+          CCACHE_LOGFILE: "${{ github.workspace }}/ccache.log"
+          CCACHE_ENABLE: ${{ github.event_name == 'pull_request' && 'ON' || 'OFF' }}
+          # Configuration pulled from LLVM_CCACHE_BUILD parameter
+          # for some reason, they aren't configuring these for windows
+          # so I am adding these
+          CIBW_ENVIRONMENT_WINDOWS: >-
+            CCACHE_CPP2=yes
+            CCACHE_HASHDIR=yes
+            CCACHE_SLOPPINESS=pch_defines,time_macros
 
       - uses: actions/upload-artifact@v4
         with:
           name: artifacts-wheels-${{ matrix.platform }}-${{ matrix.arch }}
-          path: ./wheelhouse/*.whl
+          path: |
+            ./wheelhouse/*.whl
+            *.log
 
   build-sdist:
     name: Build source distribution
