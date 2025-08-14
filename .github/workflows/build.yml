@@ -43,28 +43,62 @@ jobs:
           echo "Building llvm version $LLVM_VERSION"
           echo "LLVM_VERSION=$LLVM_VERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Setup ccache
+      # Speeding up non release builds
+      - name: Setup sccache
         if: github.event_name == 'pull_request'
         uses: hendrikmuhs/ccache-action@v1.2
         with:
           key: ${{ matrix.os }}-${{ matrix.platform }}-${{ matrix.arch }}-${{ steps.get_version.outputs.LLVM_VERSION }}
-          max-size: 1G
-          append-timestamp: false
+          max-size: 2G
+          variant: sccache
+
+      # We don't want these to be defined on release builds
+      - name: Configure sccache parameters for build
+        shell: bash
+        if: github.event_name == 'pull_request'
+        env:
+          CIBW_BEFORE_ALL_LINUX: >-
+            curl https://sh.rustup.rs -sSf
+            | sh -s -- --default-toolchain stable --profile minimal -y
+            && . "$HOME/.cargo/env"
+            && yum install -y openssl-devel
+            && cargo install sccache
+            && sccache --start-server
+            && sccache -z
+          CIBW_ENVIRONMENT_LINUX: >-
+            PATH=$PATH:$HOME/.cargo/bin
+            SCCACHE_DIR=/host${{ github.workspace }}/.sccache
+            SCCACHE_ERROR_LOG=/host${{ github.workspace }}/ccache-inner.log
+          CIBW_ENVIRONMENT_PASS_LINUX: >-
+            SCCACHE_ENABLE
+            SCCACHE_CACHE_SIZE
+            SCCACHE_IDLE_TIMEOUT          
+        run: |
+          echo "SCCACHE_ENABLE=ON" >> $GITHUB_ENV
+          echo "CIBW_BEFORE_ALL_LINUX=$CIBW_BEFORE_ALL_LINUX" >> $GITHUB_ENV
+          echo "CIBW_ENVIRONMENT_LINUX=$CIBW_ENVIRONMENT_LINUX" >> $GITHUB_ENV
+          echo "CIBW_ENVIRONMENT_PASS_LINUX=$CIBW_ENVIRONMENT_PASS_LINUX" >> $GITHUB_ENV
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.1.3
         env:
           CIBW_ARCHS: "${{ matrix.arch }}"
-          CIBW_BEFORE_TEST: rm -rf {package}/clangd
-          CIBW_TEST_SKIP: "*linux*"
-          CIBW_SKIP: "pp*"
           CIBW_BUILD: "cp311-${{ matrix.platform }}*"
-          LLVM_CCACHE_BUILD: ${{ github.event_name == 'pull_request' && 'ON' || 'OFF' }}
+          CIBW_BEFORE_TEST: |
+            rm -rf {package}/clangd
+          CIBW_TEST_SKIP: "*linux*"
 
-      - uses: actions/upload-artifact@v4
+      # sccache uses evil permissions and the cibw container uses a different user
+      - name: Take ownership of sccache directory
+        if: matrix.platform == 'manylinux' || matrix.platform == 'musllinux'
+        run: sudo chown -R $USER:$USER ${{ github.workspace }}/.sccache
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
         with:
           name: artifacts-wheels-${{ matrix.platform }}-${{ matrix.arch }}
-          path: ./wheelhouse/*.whl
+          path: |
+            ./wheelhouse/*.whl
 
   build-sdist:
     name: Build source distribution
@@ -98,6 +132,28 @@ jobs:
         with:
           name: artifacts-sdist
           path: sdist
+
+      - name: Get version from file
+        id: get_version
+        shell: bash
+        run: |
+          LLVM_VERSION=$(cat clangd_version.txt)
+          echo "Building llvm version $LLVM_VERSION"
+          echo "LLVM_VERSION=$LLVM_VERSION" >> "$GITHUB_OUTPUT"
+
+      # Speeding up non release builds
+      - name: Setup sccache
+        if: github.event_name == 'pull_request'
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: sdist-${{ steps.get_version.outputs.LLVM_VERSION }}
+          max-size: 2G
+          variant: sccache
+
+      - name: Set SCCACHE_ENABLE on PRs
+        shell: bash
+        if: github.event_name == 'pull_request'
+        run: echo "SCCACHE_ENABLE=ON" >> $GITHUB_ENV
 
       - name: Install from SDist
         run: |
