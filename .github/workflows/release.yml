@@ -61,11 +61,12 @@ jobs:
 
   upload_pypi:
     name: Upload to PyPI
-    needs: [build]
+    needs: [release]
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: write
+      attestations: write
     if: github.repository_owner == 'jmpfar'
 
     steps:
@@ -74,6 +75,12 @@ jobs:
           pattern: artifacts-*
           merge-multiple: true
           path: dist
+
+      - name: Generate artifact attestation for sdist and wheels
+        id: provenance
+        uses: actions/attest-build-provenance@v2.4.0
+        with:
+          subject-path: "dist/*"
 
       - name: Upload to PyPI (tagged commits)
         uses: pypa/gh-action-pypi-publish@v1.12.4
@@ -89,4 +96,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: dist/*.whl
+          files: |
+            dist/*.whl
+            ${{ steps.provenance.outputs.bundle-path }}
