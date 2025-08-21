@@ -1,28 +1,48 @@
+import logging
 import os
+import re
+import shutil
+import subprocess
 import sys
-from pathlib import Path
 
-import pytest
+import clangd
 
-
-@pytest.fixture(autouse=True)
-def ensure_clangd_from_wheel(monkeypatch):
-    """test the installed clangd package, not the local one"""
-    this_dir = Path(__file__).resolve().absolute().parent
-    for pd in (this_dir, this_dir / ".."):
-        try:
-            new_path = sys.path.remove(pd)
-            monkeypatch.setattr(sys, "path", new_path)
-        except ValueError:
-            pass
-    monkeypatch.delitem(sys.modules, "clangd", raising=False)
+logger = logging.getLogger(__name__)
 
 
-def test_executable_file(capsys):
-    import clangd
-
-    clangd._get_executable.cache_clear()
+def test_executable_file_exists():
     exe = clangd._get_executable("clangd")
     assert os.path.exists(exe)
     assert os.access(exe, os.X_OK)
-    assert capsys.readouterr().out == ""
+
+
+def test_executable_run_clangd_version(monkeypatch, capsys):
+    exe = clangd._get_executable("clangd")
+    result = subprocess.run(
+        [str(exe), "--version"],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0
+    # Output should contain a version string, e.g., 'clangd version ...'
+    assert re.search(r"^clangd version ", result.stdout)
+    assert result.stderr == "", "Expected no error output on --version"
+
+
+def test_package_script_clangd_version():
+    result = subprocess.run(["clangd", "--version"], capture_output=True, text=True)
+    logger.info(f"clangd version output: {result.stdout}")
+
+    assert result.returncode == 0
+    assert re.search(r"^clangd version ", result.stdout)
+    assert result.stderr == "", "Expected no error output on --version"
+
+
+def test_selected_clangd_in_venv():
+    venv_bin = os.path.dirname(sys.executable)
+    clangd_path = shutil.which("clangd")
+
+    assert clangd_path is not None, "clangd not found in PATH"
+    assert os.path.commonpath([clangd_path, venv_bin]) == venv_bin, (
+        f"clangd in PATH is not from venv: {clangd_path}"
+    )
