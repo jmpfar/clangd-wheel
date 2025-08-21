@@ -76,4 +76,4 @@ build-verbosity = 3
 environment = "CMAKE_GENERATOR=Ninja"
 
 test-requires = ["pytest==8.4.1", "pytest-sugar==1.1.0", "pytest-timeout==2.4.0"]
-test-command = "pytest {package}/test"
+test-command = "pytest {package}/tests"
