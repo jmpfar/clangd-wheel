@@ -155,7 +155,6 @@ jobs:
 
       - name: Install from SDist
         run: |
-          rm -r clangd
           pip install -v sdist/*.tar.gz
 
       - name: Install test requirements
