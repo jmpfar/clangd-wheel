@@ -39,6 +39,18 @@ input = "clangd_version.txt"
 Documentation = "https://clangd.llvm.org/"
 Source = "https://github.com/jmpfar/clangd-wheel"
 
+[project.optional-dependencies]
+test = [
+    "pytest==8.4.1",
+    "pytest-sugar==1.1.0",
+    "pytest-timeout==2.4.0",
+]
+
+dev = [
+    "clangd[test]",
+    "ruff==0.12.10",
+]
+
 [project.scripts]
 "clangd" = "clangd:clangd"
 
@@ -51,16 +63,17 @@ cmake.verbose = true
 logging.level = "DEBUG"
 wheel.exclude = ["*.h"]
 
+[tool.pytest.ini_options]
+log_cli = true
+log_cli_level = "INFO"
+log_cli_format = "%(asctime)s [%(levelname)s] (%(filename)s:%(lineno)s) %(message)s"
+log_cli_date_format = "%Y-%m-%d %H:%M:%S"
+
 [tool.cibuildwheel]
 # Super-verbose output for debugging purpose
 build-verbosity = 3
 # Set CMAKE_GENERATOR env var which is respected by scikit-build-core to use Ninja on all platforms
 environment = "CMAKE_GENERATOR=Ninja"
 
-# Testing commands for our wheels
-before-test = [
-    "git config --global user.name Name",
-    "git config --global user.email foo@bar.com"
-]
-test-requires = ["pytest", "pytest-git"]
+test-requires = ["pytest==8.4.1", "pytest-sugar==1.1.0", "pytest-timeout==2.4.0"]
 test-command = "pytest {package}/test"
