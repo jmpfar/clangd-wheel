@@ -5,14 +5,25 @@ build-backend = "scikit_build_core.build"
 [project]
 name = "clangd"
 dynamic = ["version"]
-authors = [{name = "Dan Ilan"}]
-license = { text = "Apache 2.0" }
+authors = [
+    {name = "LLVM team"},
+    {name = "Dan Ilan"}
+    ]
+maintainers = [ {name = "Dan Ilan"} ]
+license = "Apache-2.0 WITH LLVM-exception"
 description = "binaries for clangd, a clang-based C++ language server (LSP)"
 readme = "README.md"
+keywords = [
+    "clangd",
+    "llvm",
+    "clang",
+    "lsp",
+    "cpp",
+    "c"
+]
 classifiers = [
         "Environment :: No Input/Output (Daemon)",
         "Intended Audience :: Developers",
-        "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
         "Programming Language :: C",
         "Programming Language :: C++",
