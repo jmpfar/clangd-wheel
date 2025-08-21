@@ -43,12 +43,13 @@ Source = "https://github.com/jmpfar/clangd-wheel"
 "clangd" = "clangd:clangd"
 
 [tool.scikit-build]
-wheel.packages = ["clangd"]
+wheel.packages = ["src/clangd"]
 wheel.py-api = "py2.py3"
 cmake.version = ">=3.16.0"
 ninja.version = ">=1.10.0"
 cmake.verbose = true
 logging.level = "DEBUG"
+wheel.exclude = ["*.h"]
 
 [tool.cibuildwheel]
 # Super-verbose output for debugging purpose
