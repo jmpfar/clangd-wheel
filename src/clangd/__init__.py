@@ -13,7 +13,7 @@ else:
 
 @functools.cache
 def _get_executable(name: str) -> Path:
-    if sys.version_info.minor >= 9:
+    if sys.version_info >= (3, 9):
         # Only available in 3.9 or later, and required in 3.12
         possibles = [
             Path(files("clangd") / f"data/bin/{name}{s}")
