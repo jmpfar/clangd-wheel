@@ -1,0 +1,61 @@
+# This verifies pull requests haven't broken anything but also creates caches
+# for faster builds.
+name: Post-merge tests
+permissions:
+  contents: read
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  post-merge:
+    uses: ./.github/workflows/build.yml
+    with:
+      matrix_config: |
+        {
+          "include": [
+            {
+              "os": "ubuntu-latest",
+              "platform": "manylinux",
+              "arch": "x86_64"
+            },
+            {
+              "os": "ubuntu-latest",
+              "platform": "musllinux",
+              "arch": "x86_64"
+            },
+            {
+              "os": "ubuntu-24.04-arm",
+              "platform": "manylinux",
+              "arch": "aarch64"
+            },
+            {
+              "os": "ubuntu-24.04-arm",
+              "platform": "musllinux",
+              "arch": "aarch64"
+            },
+            {
+              "os": "windows-2025",
+              "platform": "win",
+              "arch": "AMD64"
+            },
+            {
+              "os": "windows-11-arm",
+              "platform": "win",
+              "arch": "ARM64"
+            },
+            {
+              "os": "macos-13",
+              "platform": "macos",
+              "arch": "x86_64"
+            },
+            {
+              "os": "macos-15",
+              "platform": "macos",
+              "arch": "arm64"
+            }
+          ]
+        }
+      use_cached_builds: true

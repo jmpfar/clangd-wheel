@@ -9,6 +9,11 @@ on:
         required: true
         type: string
         description: "JSON string containing the matrix configuration"
+      use_cached_builds:
+        description: 'Whether to cache and use cached builds'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   build-wheels:
@@ -45,7 +50,7 @@ jobs:
 
       # Speeding up non release builds
       - name: Setup sccache
-        if: github.event_name == 'pull_request'
+        if: inputs.use_cached_builds
         uses: hendrikmuhs/ccache-action@v1.2
         with:
           key: ${{ matrix.os }}-${{ matrix.platform }}-${{ matrix.arch }}-${{ steps.get_version.outputs.LLVM_VERSION }}
@@ -55,7 +60,7 @@ jobs:
       # We don't want these to be defined on release builds
       - name: Configure sccache parameters for build
         shell: bash
-        if: github.event_name == 'pull_request'
+        if: inputs.use_cached_builds
         env:
           CIBW_BEFORE_ALL_LINUX: >-
             curl https://sh.rustup.rs -sSf
@@ -143,7 +148,7 @@ jobs:
 
       # Speeding up non release builds
       - name: Setup sccache
-        if: github.event_name == 'pull_request'
+        if: inputs.use_cached_builds
         uses: hendrikmuhs/ccache-action@v1.2
         with:
           key: sdist-${{ steps.get_version.outputs.LLVM_VERSION }}
@@ -152,7 +157,7 @@ jobs:
 
       - name: Set SCCACHE_ENABLE on PRs
         shell: bash
-        if: github.event_name == 'pull_request'
+        if: inputs.use_cached_builds
         run: echo "SCCACHE_ENABLE=ON" >> $GITHUB_ENV
 
       - name: Install from SDist

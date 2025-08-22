@@ -58,6 +58,7 @@ jobs:
             }
           ]
         }
+      use_cached_builds: false
 
   upload_pypi:
     name: Upload to PyPI
