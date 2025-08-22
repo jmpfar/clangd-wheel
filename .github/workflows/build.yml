@@ -61,10 +61,9 @@ jobs:
             set -euxo pipefail
             && (yum install -y openssl-devel || apk add --no-cache openssl-dev)
             && curl https://sh.rustup.rs -sSf
-               | sh -s -- --default-toolchain stable --profile minimal -y
+            | sh -s -- --default-toolchain stable --profile minimal -y
             && . "$HOME/.cargo/env"
             && cargo install sccache
-
             && sccache --start-server
             && sccache -z
           CIBW_ENVIRONMENT_LINUX: >-
