@@ -57,14 +57,17 @@ jobs:
         shell: bash
         if: github.event_name == 'pull_request'
         env:
-          CIBW_BEFORE_ALL_LINUX: >-
+          CIBW_BEFORE_ALL_LINUX: |-
+            set -euxo pipefail
+            (yum install -y openssl-devel) || (apk add --no-cache openssl-dev)
+
             curl https://sh.rustup.rs -sSf
             | sh -s -- --default-toolchain stable --profile minimal -y
-            && . "$HOME/.cargo/env"
-            && yum install -y openssl-devel
-            && cargo install sccache
-            && sccache --start-server
-            && sccache -z
+            . "$HOME/.cargo/env"
+            cargo install sccache
+
+            sccache --start-server
+            sccache -z
           CIBW_ENVIRONMENT_LINUX: >-
             PATH=$PATH:$HOME/.cargo/bin
             SCCACHE_DIR=/host${{ github.workspace }}/.sccache
