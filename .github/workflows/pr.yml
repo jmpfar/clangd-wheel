@@ -19,6 +19,11 @@ jobs:
               "arch": "x86_64"
             },
             {
+              "os": "ubuntu-24.04-arm",
+              "platform": "musllinux",
+              "arch": "aarch64"
+            },   
+            {
               "os": "windows-2025",
               "platform": "win",
               "arch": "AMD64"
