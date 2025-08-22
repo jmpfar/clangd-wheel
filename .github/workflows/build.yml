@@ -63,10 +63,11 @@ jobs:
         if: inputs.use_cached_builds
         env:
           CIBW_BEFORE_ALL_LINUX: >-
-            curl https://sh.rustup.rs -sSf
+            set -euxo pipefail
+            && (yum install -y openssl-devel || apk add --no-cache openssl-dev openssl-libs-static)
+            && curl https://sh.rustup.rs -sSf
             | sh -s -- --default-toolchain stable --profile minimal -y
             && . "$HOME/.cargo/env"
-            && yum install -y openssl-devel
             && cargo install sccache
             && sccache --start-server
             && sccache -z
