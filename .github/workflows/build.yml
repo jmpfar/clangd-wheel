@@ -89,9 +89,7 @@ jobs:
         env:
           CIBW_ARCHS: "${{ matrix.arch }}"
           CIBW_BUILD: "cp311-${{ matrix.platform }}*"
-          CIBW_BEFORE_TEST: |
-            rm -rf {package}/clangd
-          CIBW_TEST_SKIP: "*linux*"
+
 
       # sccache uses evil permissions and the cibw container uses a different user
       - name: Take ownership of sccache directory
@@ -162,7 +160,6 @@ jobs:
 
       - name: Install from SDist
         run: |
-          rm -r clangd
           pip install -v sdist/*.tar.gz
 
       - name: Install test requirements

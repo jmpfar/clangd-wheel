@@ -5,14 +5,25 @@ build-backend = "scikit_build_core.build"
 [project]
 name = "clangd"
 dynamic = ["version"]
-authors = [{name = "Dan Ilan"}]
-license = { text = "Apache 2.0" }
+authors = [
+    {name = "LLVM team"},
+    {name = "Dan Ilan"}
+    ]
+maintainers = [ {name = "Dan Ilan"} ]
+license = "Apache-2.0 WITH LLVM-exception"
 description = "binaries for clangd, a clang-based C++ language server (LSP)"
 readme = "README.md"
+keywords = [
+    "clangd",
+    "llvm",
+    "clang",
+    "lsp",
+    "cpp",
+    "c"
+]
 classifiers = [
         "Environment :: No Input/Output (Daemon)",
         "Intended Audience :: Developers",
-        "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
         "Programming Language :: C",
         "Programming Language :: C++",
@@ -28,16 +39,36 @@ input = "clangd_version.txt"
 Documentation = "https://clangd.llvm.org/"
 Source = "https://github.com/jmpfar/clangd-wheel"
 
+[project.optional-dependencies]
+test = [
+    "pytest==8.4.1",
+    "pytest-sugar==1.1.0",
+    "pytest-timeout==2.4.0",
+    "pylspclient==0.1.2"
+]
+
+dev = [
+    "clangd[test]",
+    "ruff==0.12.10",
+]
+
 [project.scripts]
 "clangd" = "clangd:clangd"
 
 [tool.scikit-build]
-wheel.packages = ["clangd"]
+wheel.packages = ["src/clangd"]
 wheel.py-api = "py2.py3"
 cmake.version = ">=3.16.0"
 ninja.version = ">=1.10.0"
 cmake.verbose = true
 logging.level = "DEBUG"
+wheel.exclude = ["*.h"]
+
+[tool.pytest.ini_options]
+log_cli = true
+log_cli_level = "INFO"
+log_cli_format = "%(asctime)s [%(levelname)s] (%(filename)s:%(lineno)s) %(message)s"
+log_cli_date_format = "%Y-%m-%d %H:%M:%S"
 
 [tool.cibuildwheel]
 # Super-verbose output for debugging purpose
@@ -45,10 +76,5 @@ build-verbosity = 3
 # Set CMAKE_GENERATOR env var which is respected by scikit-build-core to use Ninja on all platforms
 environment = "CMAKE_GENERATOR=Ninja"
 
-# Testing commands for our wheels
-before-test = [
-    "git config --global user.name Name",
-    "git config --global user.email foo@bar.com"
-]
-test-requires = ["pytest", "pytest-git"]
-test-command = "pytest {package}/test"
+test-command = "pytest {package}/tests"
+test-extras = "test"
