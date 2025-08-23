@@ -106,11 +106,9 @@ def test_clangd_completion(lsp_client: LspClient, tmp_path: Path):
 
 
 TEST_DIAGNOSTICS_CPP = """
-#include <iostream>
-
 int main() {
-    std::cout << "Hello"
-    return 0;
+    int x = 3 + 3
+    return x;
 }"""
 
 
