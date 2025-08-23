@@ -143,6 +143,6 @@ def test_clangd_diagnostics(lsp_client: LspClient, tmp_path: Path):
         time.sleep(0.5)
 
     diagnostic_codes = [d["code"] for d in diagnostics]
-    assert "expected_semi_after_expr" in diagnostic_codes, (
+    assert "expected_semi_declaration" in diagnostic_codes, (
         "Expected semicolon syntax error not found in diagnostics."
     )
