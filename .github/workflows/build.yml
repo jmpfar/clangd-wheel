@@ -90,6 +90,7 @@ jobs:
         env:
           CIBW_ARCHS: "${{ matrix.arch }}"
           CIBW_BUILD: "cp311-${{ matrix.platform }}*"
+          MACOSX_DEPLOYMENT_TARGET: ${{ runner.os == 'macOS' && '10.13' || '' }}
 
 
       # sccache uses evil permissions and the cibw container uses a different user
