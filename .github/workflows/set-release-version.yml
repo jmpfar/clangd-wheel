@@ -1,0 +1,59 @@
+name: Set release version
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "The new version number"
+        required: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update_version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate version
+        run: |
+          set -e
+          old_version=$(cat clangd_version.txt)
+          new_version="${{ github.event.inputs.version }}"
+
+          echo "Old version: $old_version"
+          echo "New version: $new_version"
+
+          if ! [[ "$new_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Error: Version format must be Major.Minor.Patch.Wheel" >&2
+            exit 1
+          fi
+
+          # Check if new version is greater
+          highest_version=$(printf "%s\n%s" "$old_version" "$new_version" | sort -V | tail -n1)
+
+          if [[ "$highest_version" == "$old_version" ]] || [[ "$new_version" == "$old_version" ]]; then
+            echo "Error: New version ($new_version) must be greater than the old version ($old_version)." >&2
+            exit 1
+          fi
+
+          echo "Version validation passed."
+
+      - name: Update clangd_version.txt
+        run: echo "${{ github.event.inputs.version }}" > clangd_version.txt
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "Manual release version ${{ github.event.inputs.version }}"
+          title: "Manual release version ${{ github.event.inputs.version }}"
+          body: |
+            This PR updates the version to ${{ github.event.inputs.version }}.
+            Merging this PR will trigger the release process.
+          branch: "release/v${{ github.event.inputs.version }}"
+          base: main
+          labels: |
+            llvm-version-update
+          reviewers: jmpfar
