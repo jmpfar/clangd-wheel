@@ -49,7 +49,7 @@ test = [
 
 dev = [
     "clangd[test]",
-    "ruff==0.12.10",
+    "ruff==0.12.11",
 ]
 
 [project.scripts]
