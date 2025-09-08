@@ -1,5 +1,5 @@
 pytest==8.4.2
 pytest-sugar==1.1.1
 pytest-timeout==2.4.0
-ruff==0.12.11
+ruff==0.12.12
 pylspclient==0.1.2
