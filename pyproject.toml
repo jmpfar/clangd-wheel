@@ -39,14 +39,13 @@ input = "clangd_version.txt"
 Documentation = "https://clangd.llvm.org/"
 Source = "https://github.com/jmpfar/clangd-wheel"
 
-[project.optional-dependencies]
+[dependency-groups]
 test = [
     "pytest==8.4.2",
     "pytest-sugar==1.1.1",
     "pytest-timeout==2.4.0",
     "pylspclient==0.1.2"
 ]
-
 dev = [
     "clangd[test]",
     "ruff==0.14.0",
