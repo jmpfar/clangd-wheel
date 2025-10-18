@@ -47,7 +47,6 @@ test = [
     "pylspclient==0.1.2"
 ]
 dev = [
-    "clangd[test]",
     "ruff==0.14.0",
 ]
 
@@ -76,4 +75,4 @@ build-verbosity = 3
 environment = "CMAKE_GENERATOR=Ninja"
 
 test-command = "pytest {package}/tests"
-test-extras = "test"
+test-groups = ["test", "dev"]
