@@ -34,7 +34,7 @@ clangd
 | Ubuntu   | 24.04   | x86_64       | [musllinux](https://musl.libc.org/) |
 | Ubuntu   | 24.04   | arm64        | manylinux                           |
 | Ubuntu   | 24.04   | arm64        | [musllinux](https://musl.libc.org/) |         
-| macOS    | 13      | x86_64       |                                     |
+| macOS    | 15      | x86_64       |                                     |
 | macOS    | 15      | arm64        |                                     |
 | Windows  | 2025    | x86_64       |                                     |
 | Windows  | 11      | arm64        |                                     |
