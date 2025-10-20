@@ -47,7 +47,7 @@ test = [
     "pylspclient==0.1.2"
 ]
 dev = [
-    "ruff==0.14.0",
+    "ruff==0.14.1",
 ]
 
 [project.scripts]
