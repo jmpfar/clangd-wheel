@@ -1,5 +1,6 @@
 import logging
 import os
+from pathlib import Path
 import subprocess
 from collections.abc import Iterator
 
@@ -9,6 +10,7 @@ from pylspclient.lsp_client import LspClient
 from pylspclient.lsp_endpoint import LspEndpoint
 
 import clangd
+import yaml
 
 log = logging.getLogger(__name__)
 
@@ -36,28 +38,45 @@ def clangd_server() -> Iterator[subprocess.Popen]:
 
     process.terminate()
     try:
-        process.wait(timeout=5)
+        process.wait(timeout=10)
     except subprocess.TimeoutExpired:
-        log.warning("clangd did not terminate gracefully, killing.")
+        log.error("clangd did not terminate gracefully, killing.")
         process.kill()
         pytest.fail("clangd server did not shut down cleanly.")
 
     log.debug("clangd server stopped.")
 
+@pytest.fixture
+def clangd_root_dir(tmp_path: Path) -> Path:
+    root = tmp_path / "clangd_root"
+    root.mkdir(exist_ok=True)
+    return root
+
+
+@pytest.fixture(autouse=True, scope="function")
+def clangd_dot_file(clangd_root_dir: Path) -> Path:
+    clangd_dot_data = {"Index": {"StandardLibrary": False}}
+
+    clangd_yaml = yaml.dump(clangd_dot_data)
+
+    clangd_config = clangd_root_dir / ".clangd"
+    clangd_config.write_text(clangd_yaml)
+    return clangd_config
 
 @pytest.fixture(scope="function")
-def lsp_client(clangd_server: subprocess.Popen) -> Iterator[LspClient]:
+def lsp_client(
+    clangd_server: subprocess.Popen, clangd_root_dir: Path
+) -> Iterator[LspClient]:
     endpoint = JsonRpcEndpoint(clangd_server.stdin, clangd_server.stdout)
     lsp_endpoint = LspEndpoint(endpoint)
 
     client = LspClient(lsp_endpoint)
-    root_uri = f"file://{os.getcwd()}"
 
     log.info("Initializing LSP client...")
     response = client.initialize(
         processId=clangd_server.pid,
         rootPath=None,
-        rootUri=root_uri,
+        rootUri=clangd_root_dir.as_uri(),
         initializationOptions=None,
         capabilities=None,
         trace="off",
