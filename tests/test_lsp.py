@@ -63,11 +63,11 @@ int main() {
 }"""
 
 
-def test_clangd_completion(lsp_client: LspClient, tmp_path: Path):
+def test_clangd_completion(lsp_client: LspClient, clangd_root_dir: Path):
     """
     Tests that clangd provides correct member completions for a struct variable.
     """
-    cpp_path = tmp_path / "test_completion.cpp"
+    cpp_path = clangd_root_dir / "test_completion.cpp"
     cpp_path.write_text(TEST_COMPLETION_CPP)
     cpp_uri = cpp_path.as_uri()
 
@@ -113,11 +113,11 @@ int main() {
 
 
 @pytest.mark.timeout(5)
-def test_clangd_diagnostics(lsp_client: LspClient, tmp_path: Path):
+def test_clangd_diagnostics(lsp_client: LspClient, clangd_root_dir: Path):
     """
     Tests that clangd correctly reports syntax errors.
     """
-    cpp_path = tmp_path / "test_diagnostics.cpp"
+    cpp_path = clangd_root_dir / "test_diagnostics.cpp"
     cpp_path.write_text(TEST_DIAGNOSTICS_CPP)
     cpp_uri = cpp_path.as_uri()
 
