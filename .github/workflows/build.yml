@@ -133,7 +133,7 @@ jobs:
         with:
           python-version: "3.13"
 
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v6
         with:
           name: artifacts-sdist
           path: sdist
