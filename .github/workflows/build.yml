@@ -99,7 +99,7 @@ jobs:
         run: sudo chown -R $USER:$USER ${{ github.workspace }}/.sccache
 
       - name: Upload wheels
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: artifacts-wheels-${{ matrix.platform }}-${{ matrix.arch }}
           path: |
@@ -115,7 +115,7 @@ jobs:
       - name: Build SDist
         run: pipx run build --sdist
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           path: dist/*.tar.gz
           name: artifacts-sdist
