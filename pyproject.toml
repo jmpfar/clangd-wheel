@@ -61,7 +61,6 @@ cmake.version = ">=3.16.0"
 ninja.version = ">=1.10.0"
 cmake.verbose = true
 logging.level = "DEBUG"
-wheel.exclude = ["*.h", "!clangd/data/lib/clang/**"]
 
 [tool.pytest.ini_options]
 log_cli = true
