@@ -64,6 +64,9 @@ jobs:
     name: Upload to PyPI
     needs: [release]
     runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/clangd
     permissions:
       id-token: write
       contents: write
