@@ -45,15 +45,20 @@ jobs:
         shell: bash
         run: |
           LLVM_VERSION=$(cat clangd_version.txt)
+          LLVM_VERSION_DASHED=${LLVM_VERSION//./-}
+
           echo "Building llvm version $LLVM_VERSION"
+          echo "Dashed llvm version: $LLVM_VERSION_DASHED"
+          
           echo "LLVM_VERSION=$LLVM_VERSION" >> "$GITHUB_OUTPUT"
+          echo "LLVM_VERSION_DASHED=$LLVM_VERSION_DASHED" >> "$GITHUB_OUTPUT"
 
       # Speeding up non release builds
       - name: Setup sccache
         if: inputs.use_cached_builds
         uses: hendrikmuhs/ccache-action@v1.2
         with:
-          key: ${{ matrix.os }}-${{ matrix.platform }}-${{ matrix.arch }}-${{ steps.get_version.outputs.LLVM_VERSION }}
+          key: ${{ matrix.os }}-${{ matrix.arch }}-${{ matrix.platform }}-${{ steps.get_version.outputs.LLVM_VERSION_DASHED }}
           max-size: 2G
           variant: sccache
 
@@ -151,7 +156,7 @@ jobs:
         if: inputs.use_cached_builds
         uses: hendrikmuhs/ccache-action@v1.2
         with:
-          key: sdist-${{ steps.get_version.outputs.LLVM_VERSION }}
+          key: sdist-${{ steps.get_version.outputs.LLVM_VERSION_DASHED }}
           max-size: 2G
           variant: sccache
 
