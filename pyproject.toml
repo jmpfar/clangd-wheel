@@ -41,7 +41,7 @@ Source = "https://github.com/jmpfar/clangd-wheel"
 
 [dependency-groups]
 test = [
-    "pytest==9.0.0",
+    "pytest==9.0.1",
     "pytest-sugar==1.1.1",
     "pytest-timeout==2.4.0",
     "pylspclient==0.1.2",
