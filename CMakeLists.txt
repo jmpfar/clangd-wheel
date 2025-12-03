@@ -8,9 +8,8 @@ set(CLANGD_VERSION_MAJOR ${CMAKE_MATCH_1}
 )# https://cmake.org/cmake/help/latest/variable/CMAKE_MATCH_n.html
 message(STATUS "clangd version: ${CLANGD_VERSION}")
 
-set(LLVM_DOWNLOAD_URL
-    "https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-${CLANGD_VERSION}.tar.gz"
-)
+set(LLVM_DOWNLOAD_URL "https://github.com/llvm/llvm-project/archive/refs/tags/"
+                      "llvmorg-${CLANGD_VERSION}.tar.gz")
 
 # Setup base cmake arguments
 set(LLVM_CMAKE_ARGS
@@ -23,8 +22,7 @@ set(LLVM_CMAKE_ARGS
     -DLLVM_ENABLE_ZSTD=OFF
     -DLLVM_INCLUDE_BENCHMARKS=OFF
     -DLLVM_INCLUDE_EXAMPLES=OFF
-    -DLLVM_INCLUDE_TESTS=OFF
-    )
+    -DLLVM_INCLUDE_TESTS=OFF)
 
 if(DEFINED ENV{SCCACHE_ENABLE} AND "$ENV{SCCACHE_ENABLE}" STREQUAL "ON")
   find_program(SCCACHE sccache)
@@ -45,17 +43,17 @@ ExternalProject_Add(
   USES_TERMINAL_DOWNLOAD 1
   USES_TERMINAL_CONFIGURE 1
   USES_TERMINAL_BUILD 1
-  DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+  DOWNLOAD_EXTRACT_TIMESTAMP
+  TRUE
   CMAKE_ARGS ${LLVM_CMAKE_ARGS}
   BUILD_COMMAND ${CMAKE_COMMAND} --build . --target clangd)
 
-set(config-subfolder "")
+set(CONFIG_SUBFOLDER "")
 if(CMAKE_GENERATOR MATCHES "Visual Studio")
-  set(config-subfolder "Release")
+  set(CONFIG_SUBFOLDER "Release")
 endif()
-set(clangd-executable
-    ${CMAKE_BINARY_DIR}/llvm/${config-subfolder}/bin/clangd${CMAKE_EXECUTABLE_SUFFIX}
-)
+set(CLANGD_EXECUTABLE "${CMAKE_BINARY_DIR}/llvm/${CONFIG_SUBFOLDER}/bin/clangd"
+                      "${CMAKE_EXECUTABLE_SUFFIX}")
 
 set(IS_ARM64_WINDOWS FALSE)
 string(TOUPPER "$ENV{VSCMD_ARG_HOST_ARCH}" WIN_HOST_ARCH_UPPER)

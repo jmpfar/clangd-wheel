@@ -49,7 +49,7 @@ jobs:
 
           echo "Building llvm version $LLVM_VERSION"
           echo "Dashed llvm version: $LLVM_VERSION_DASHED"
-          
+
           echo "LLVM_VERSION=$LLVM_VERSION" >> "$GITHUB_OUTPUT"
           echo "LLVM_VERSION_DASHED=$LLVM_VERSION_DASHED" >> "$GITHUB_OUTPUT"
 
@@ -83,7 +83,7 @@ jobs:
           CIBW_ENVIRONMENT_PASS_LINUX: >-
             SCCACHE_ENABLE
             SCCACHE_CACHE_SIZE
-            SCCACHE_IDLE_TIMEOUT          
+            SCCACHE_IDLE_TIMEOUT
         run: |
           echo "SCCACHE_ENABLE=ON" >> $GITHUB_ENV
           echo "CIBW_BEFORE_ALL_LINUX=$CIBW_BEFORE_ALL_LINUX" >> $GITHUB_ENV
