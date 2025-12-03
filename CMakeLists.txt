@@ -8,8 +8,9 @@ set(CLANGD_VERSION_MAJOR ${CMAKE_MATCH_1}
 )# https://cmake.org/cmake/help/latest/variable/CMAKE_MATCH_n.html
 message(STATUS "clangd version: ${CLANGD_VERSION}")
 
-set(LLVM_DOWNLOAD_URL "https://github.com/llvm/llvm-project/archive/refs/tags/"
-                      "llvmorg-${CLANGD_VERSION}.tar.gz")
+string(CONCAT LLVM_DOWNLOAD_URL
+              "https://github.com/llvm/llvm-project/archive/refs/tags/"
+              "llvmorg-${CLANGD_VERSION}.tar.gz")
 
 # Setup base cmake arguments
 set(LLVM_CMAKE_ARGS
@@ -52,8 +53,9 @@ set(CONFIG_SUBFOLDER "")
 if(CMAKE_GENERATOR MATCHES "Visual Studio")
   set(CONFIG_SUBFOLDER "Release")
 endif()
-set(CLANGD_EXECUTABLE "${CMAKE_BINARY_DIR}/llvm/${CONFIG_SUBFOLDER}/bin/clangd"
-                      "${CMAKE_EXECUTABLE_SUFFIX}")
+string(CONCAT CLANGD_EXECUTABLE
+              "${CMAKE_BINARY_DIR}/llvm/${CONFIG_SUBFOLDER}/bin/clangd"
+              "${CMAKE_EXECUTABLE_SUFFIX}")
 
 set(IS_ARM64_WINDOWS FALSE)
 string(TOUPPER "$ENV{VSCMD_ARG_HOST_ARCH}" WIN_HOST_ARCH_UPPER)
@@ -78,7 +80,7 @@ if(STRIP_EXECUTABLE AND NOT IS_ARM64_WINDOWS)
   message(STATUS "Add stripping operation for clangd executable")
   add_custom_target(
     strip-clangd ALL
-    COMMAND ${STRIP_EXECUTABLE} ${clangd-executable}
+    COMMAND ${STRIP_EXECUTABLE} ${CLANGD_EXECUTABLE}
     COMMENT "Stripping clangd executable for size reduction")
   add_dependencies(strip-clangd build-clangd)
 endif()
