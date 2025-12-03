@@ -86,7 +86,7 @@ if(STRIP_EXECUTABLE AND NOT IS_ARM64_WINDOWS)
 endif()
 
 # Define an installation rule that copies the executable to our Python package
-install(PROGRAMS ${clangd-executable} DESTINATION clangd/data/bin)
+install(PROGRAMS ${CLANGD_EXECUTABLE} DESTINATION clangd/data/bin)
 
 install(
   DIRECTORY ${CMAKE_BINARY_DIR}/llvm/lib/clang/${CLANGD_VERSION_MAJOR}/include
