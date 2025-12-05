@@ -1,5 +1,4 @@
 import logging
-import os
 from pathlib import Path
 import subprocess
 from collections.abc import Iterator
@@ -46,6 +45,7 @@ def clangd_server() -> Iterator[subprocess.Popen]:
 
     log.debug("clangd server stopped.")
 
+
 @pytest.fixture
 def clangd_root_dir(tmp_path: Path) -> Path:
     root = tmp_path / "clangd_root"
@@ -62,6 +62,7 @@ def clangd_dot_file(clangd_root_dir: Path) -> Path:
     clangd_config = clangd_root_dir / ".clangd"
     clangd_config.write_text(clangd_yaml)
     return clangd_config
+
 
 @pytest.fixture(scope="function")
 def lsp_client(

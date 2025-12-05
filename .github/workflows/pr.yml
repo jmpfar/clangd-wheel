@@ -7,6 +7,14 @@ on:
     branches: [main]
 
 jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - uses: pre-commit/action@v3.0.1
   pr:
     uses: ./.github/workflows/build.yml
     with:
@@ -22,7 +30,7 @@ jobs:
               "os": "ubuntu-24.04-arm",
               "platform": "musllinux",
               "arch": "aarch64"
-            },   
+            },
             {
               "os": "windows-2025",
               "platform": "win",
