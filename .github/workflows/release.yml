@@ -82,7 +82,7 @@ jobs:
 
       - name: Generate artifact attestation for sdist and wheels
         id: provenance
-        uses: actions/attest-build-provenance@v3.0.0
+        uses: actions/attest-build-provenance@v3.1.0
         with:
           subject-path: "dist/*"
 
