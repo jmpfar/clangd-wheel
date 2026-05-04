@@ -48,7 +48,7 @@ test = [
     "PyYAML==6.0.3"
 ]
 dev = [
-    "ruff==0.15.5",
+    "ruff==0.15.12",
 ]
 
 [project.scripts]
